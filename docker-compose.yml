@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+
+  localstack:
+    container_name: "localstack_main"
+    image: localstack/localstack
+    network_mode: bridge
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4571:4571"
+    environment:
+      - SERVICES=s3,dynamodb
+      - DEBUG=${DEBUG-}
+      - DATA_DIR=${DATA_DIR-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - HOST_TMP_FOLDER=${TMPDIR:-/tmp/}localstack
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  # database:
+  #   container_name: dynamodb-local
+  #   image: amazon/dynamodb-local
+  #   # To persist the data we do - https://stackoverflow.com/a/52853294/7127317
+  #   command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - backend
+
+  imagerepo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: imagerepo
+    ports:
+      - '5000:5000'
+    volumes:
+      - './app:/app'
+    networks:
+      - backend
+    env_file:
+      - .env
+
+networks:
+  backend:
+    driver: bridge
+
+  localstack-net:
+    external: false
+    driver: bridge
+
+volumes:
+  dynamodb-local: null

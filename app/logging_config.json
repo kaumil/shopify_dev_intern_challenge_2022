@@ -1,0 +1,9 @@
+{
+    "logger": {
+        "path": "logs",
+        "filename": "logs.log",
+        "level": "info",
+        "rotation": "3 MB",
+        "retention": "1 months"
+    }
+}

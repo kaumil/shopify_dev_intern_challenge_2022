@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  imagerepolambda:
+    build:
+      context: .
+      dockerfile: Dockerfile.aws.lambda
+    container_name: imagerepolambda
+    ports:
+      - '8000:8080'
+    volumes:
+      - '.:/app'
+    networks:
+      - backend
+
+networks:
+  backend: null
